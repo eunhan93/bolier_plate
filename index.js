@@ -3,6 +3,7 @@ const app = express(); // function을 통해서 새로운 express 앱을 만든�
 const port = 5000;  // back server port <- 아무 숫자나 ok
 const bodyParser = require('body-parser'); // 클라이언트에서 오는 정보를 서버에서 분석해서 가져올 수 있게 하는 것
 const cookieParser = require('cookie-parser');
+const { auth } = require('./middleware/auth');
 const { User } = require('./models/User');
 
 const config = require('./config/key');
@@ -28,7 +29,7 @@ mongoose.connect(config.mongoURI, {
 app.get('/', (req, res) => res.send('Hello World! hihi')); // root directory에 오면 hello world가 출력되게 해준다
 
 // 회원가입
-app.post('/register', (req, res) => {
+app.post('/api/users/register', (req, res) => {
     // 회원 가입 시 필요한 정보들을 client에서 가져와 데이터 베이스에 넣는다
     const user = new User(req.body);
     //req.body <- 이렇게 쓸 수 있는 이유가 body-parser
@@ -46,7 +47,7 @@ app.post('/register', (req, res) => {
 
 
 // log in
-app.post('/login', (req, res) => {
+app.post('/api/users/login', (req, res) => {
     // 요청된 이메일을 데이터베이스에서 찾는다
     User.findOne({email : req.body.email}, (err, user) => {
         if(!user) {
@@ -73,6 +74,11 @@ app.post('/login', (req, res) => {
     // 있으면 비밀번호 확인
     // 맞으면 토큰 생성
 });
+
+app.get('/api/users/auth', auth, (req, res) => {
+    // auth <- 미들웨어, 리퀘스트 받고 콜백 하기 전에 
+});
+
 
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`)); // port 5000에서 실행되도록 한다

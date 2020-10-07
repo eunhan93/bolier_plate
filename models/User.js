@@ -39,7 +39,6 @@ const userSchema = mongoose.Schema({
 // *
 userSchema.pre('save', function ( next ) {
   var user = this; // User모델자체를 가르킴
-  console.log(user.password);
 
   // isModified: password가 변경될때
   if (user.isModified('password')) {
@@ -62,8 +61,8 @@ userSchema.pre('save', function ( next ) {
 userSchema.methods.comparePassword = function (plainPassword, cb) {
   // 암호화 된 비밀번호화 비교하려면 입력된 비밀번호를 암호화 해야 함
   bcrypt.compare(plainPassword, this.password, function(err, isMatch){
-    if(err) return cb(err),
-      cb(null, isMatch)
+    if(err) return cb(err);
+    cb(null, isMatch)
   });
 }
 userSchema.methods.generateToken = function(cb){
